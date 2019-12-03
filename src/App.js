@@ -13,24 +13,41 @@ class App extends React.Component {
 
     state = {
         tasks: [
-            {title: "JS", isDone: true, priority: "medium"},
-            {title: "HTML", isDone: true, priority: "low"},
-            {title: "CSS", isDone: true, priority: "low"},
-            {title: "ReactJS", isDone: false, priority: "high"}
+            {id:0,title: "JS", isDone: true, priority: "medium"},
+            {id:1,title: "HTML", isDone: true, priority: "low"},
+            {id:2,title: "CSS", isDone: true, priority: "low"},
+            {id:3,title: "ReactJS", isDone: false, priority: "high"}
         ],
         filterValue: "All"
     };
+    nextId=4;
 
     addTask = (newText) => {
         let newTask = {
-            title: newText,
+            title: this.nextId,
             isDone: false,
             priority: "low"
         };
+        this.nextId++;
         let newTasks = [...this.state.tasks, newTask];
         this.setState( {
             tasks: newTasks
         });
+    }
+    changeTitle=(taskId,title)=>{
+        let newTasks = this.state.tasks.map(t => {
+            if (t.id != taskId) {
+                return t; //возвращаем таску без изменения, если это не та таска, которую нужно поменять
+            }
+            else {
+                // делаем копию таски и сразу перезатираем в ней сво-во isDone новым значением
+                return {...t, title: title};
+            }
+        });
+        // а уже получив новый массив, изменяем этот массив в state с помощью setState
+        this.setState({
+            tasks: newTasks
+        })
     }
 
     changeFilter = (newFilterValue) => {
@@ -39,11 +56,11 @@ class App extends React.Component {
         });
     }
 
-    changeStatus = (task, isDone) => {
+    changeStatus = (taskId, isDone) => {
         // создадим с помощью map новый массив, в котором все остальные таски будут сидеть такие же,
         // а вот та, которую нужно изменить, будет другой: вернём копию таски с изменённым сво-вом
         let newTasks = this.state.tasks.map(t => {
-            if (t != task) {
+            if (t.id != taskId) {
                 return t; //возвращаем таску без изменения, если это не та таска, которую нужно поменять
             }
             else {
@@ -64,7 +81,7 @@ class App extends React.Component {
             <div className="App">
                 <div className="todoList">
                     <TodoListHeader addTask={this.addTask} />
-                    <TodoListTasks changeStatus={this.changeStatus }
+                    <TodoListTasks changeTitle={this.changeTitle} changeStatus={this.changeStatus }
                                    tasks={this.state.tasks.filter(t => {
                         if (this.state.filterValue === "All") {
                             return true;
