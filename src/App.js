@@ -12,42 +12,66 @@ class App extends React.Component {
     }
 
     state = {
-        tasks: [
-            {id:0,title: "JS", isDone: true, priority: "medium"},
-            {id:1,title: "HTML", isDone: true, priority: "low"},
-            {id:2,title: "CSS", isDone: true, priority: "low"},
-            {id:3,title: "ReactJS", isDone: false, priority: "high"}
-        ],
-        filterValue: "All"
+        tasks: [],
+        filterValue: "All",
+        id:1
     };
-    nextId=4;
+
+
+    componentDidMount(){
+        this.todo = JSON.parse(localStorage.getItem('todo'));
+        if (localStorage.getItem('todo')) {
+            this.setState({
+                tasks: [...this.todo.tasks],
+                filterValue: "All",
+                id:this.todo.id
+            })
+        } else {
+            this.setState({
+                tasks: [],
+                filterValue: "All",
+                id:1
+            })
+        }
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        localStorage.setItem('todo', JSON.stringify(nextState));
+    }
+
+
 
     addTask = (newText) => {
         let newTask = {
-            title: this.nextId,
+            id:this.state.id,
+            title: newText,
             isDone: false,
             priority: "low"
         };
-        this.nextId++;
+        this.state.id++;
         let newTasks = [...this.state.tasks, newTask];
         this.setState( {
             tasks: newTasks
         });
     }
-    changeTitle=(taskId,title)=>{
+    changeTask=(taskId,obj)=>{
         let newTasks = this.state.tasks.map(t => {
             if (t.id != taskId) {
-                return t; //возвращаем таску без изменения, если это не та таска, которую нужно поменять
+                return t;
             }
             else {
-                // делаем копию таски и сразу перезатираем в ней сво-во isDone новым значением
-                return {...t, title: title};
+                return {...t, ...obj};
             }
         });
-        // а уже получив новый массив, изменяем этот массив в state с помощью setState
         this.setState({
             tasks: newTasks
         })
+    }
+    changeTitle=(taskId,title)=>{
+       this.changeTask(taskId,{title:title})
+    }
+    changeStatus = (taskId, isDone) => {
+        this.changeTask(taskId,{isDone:isDone})
     }
 
     changeFilter = (newFilterValue) => {
@@ -56,24 +80,7 @@ class App extends React.Component {
         });
     }
 
-    changeStatus = (taskId, isDone) => {
-        // создадим с помощью map новый массив, в котором все остальные таски будут сидеть такие же,
-        // а вот та, которую нужно изменить, будет другой: вернём копию таски с изменённым сво-вом
-        let newTasks = this.state.tasks.map(t => {
-            if (t.id != taskId) {
-                return t; //возвращаем таску без изменения, если это не та таска, которую нужно поменять
-            }
-            else {
-                // делаем копию таски и сразу перезатираем в ней сво-во isDone новым значением
-                return {...t, isDone: isDone};
-            }
-        });
-        // а уже получив новый массив, изменяем этот массив в state с помощью setState
-        this.setState({
-            tasks: newTasks
-        })
 
-    }
 
     render = () => {
 
