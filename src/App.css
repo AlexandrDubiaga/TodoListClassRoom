@@ -1,6 +1,3 @@
-.App {
-
-}
 
 .todoList {
   width: 500px;
@@ -26,3 +23,15 @@
 .error {
   border-color: red;
 }
+
+
+.App {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.todoList {
+  width: 300px;
+}
+
