@@ -15,7 +15,7 @@ class App extends React.Component {
             title: newText,
             tasks:[]
         };
-        this.nextId++;
+        this.nextId++;//commmit
         this.props.addTodolistAC(newTodoList)
     }
     delTodo = (val) => {
